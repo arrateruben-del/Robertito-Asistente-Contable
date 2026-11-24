@@ -14,7 +14,7 @@ Todo el texto de cara al usuario está en **español rioplatense**.
 
 - **Bot:** https://t.me/Elrobertbot
 - **Mini App (hosteada por nosotros):** https://robertito-bot-ruben.abacusai.cloud/app
-- **Webhook:** `https://robertito-bot-ruben.abacusai.cloud/webhook/<secret_path>` (secret en `.env`)
+- **Webhook:** lo administra el Telegram Trigger del workflow de n8n; este backend ya no debe registrarlo.
 - **Health:** https://robertito-bot-ruben.abacusai.cloud/health
 
 > La Mini App publicada (botones Clientes / Estudio) hace deep-link a
@@ -54,7 +54,7 @@ Robertito-Asistente-Contable/
 para llamar a la Bot API. Elegido por ser simple de mantener e integrarse
 directamente con nginx, y poder servir la Mini App estática desde el mismo proceso.
 
-**Flujo:** Telegram → nginx (`robertito-bot-ruben.vm.internal`) → Uvicorn (`127.0.0.1:8081`).
+**Flujo:** Telegram → Telegram Trigger de n8n → workflows de procesamiento. FastAPI queda para servir la Mini App y el healthcheck; no debe registrar el webhook del bot.
 
 ---
 
@@ -66,8 +66,7 @@ directamente con nginx, y poder servir la Mini App estática desde el mismo proc
 | GET    | `/app` y `/`              | Sirve la Mini App (`webapp/index.html`)       |
 | GET    | `/health`                 | Healthcheck (`ok`)                            |
 
-El webhook valida el header `X-Telegram-Bot-Api-Secret-Token` contra
-`WEBHOOK_SECRET_TOKEN`, y la ruta secreta contra `WEBHOOK_SECRET_PATH`.
+El endpoint FastAPI `/webhook/<secret_path>` conserva su validación para usos manuales, pero el bot en producción debe entregar las actualizaciones directamente a n8n.
 
 ---
 
@@ -118,7 +117,7 @@ bloquea por defecto).
    ./venv/bin/python scripts/poblar_env.py
    ```
    > Alternativa manual: `cp .env.example .env` y completar los valores.
-3. Registrar el webhook, el botón de menú y los comandos en Telegram:
+3. Actualizar solo el botón de menú y los comandos del bot (el script no cambia el webhook; el Trigger de n8n es el único responsable):
    ```bash
    ./venv/bin/python scripts/registrar_telegram.py
    ```
