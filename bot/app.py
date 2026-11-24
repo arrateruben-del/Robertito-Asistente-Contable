@@ -2,7 +2,7 @@
 Servidor web del bot Robertito (FastAPI, modo webhook).
 
 Expone:
-  - POST /webhook/<secret_path>  → recibe los updates de Telegram.
+  - POST /webhook/<secret_path>  → endpoint legado; n8n recibe los updates en producción.
   - GET  /app                    → sirve la Mini App (webapp/index.html).
   - GET  /                       → idem (home).
   - GET  /health                 → healthcheck simple.
