@@ -1,0 +1,19 @@
+# Secretos y entorno
+.env
+
+# Datos / base SQLite
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Sistema
+.DS_Store
+*.log
