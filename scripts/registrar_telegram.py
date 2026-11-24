@@ -1,6 +1,6 @@
 """
-Registra la configuración del bot en Telegram: webhook, botón de menú (Mini App)
-y lista de comandos. NO imprime el token.
+Actualiza el botón de menú (Mini App) y los comandos en Telegram. No registra ni modifica
+el webhook, que pertenece exclusivamente al Telegram Trigger de n8n. NO imprime el token.
 
 Uso (con el venv del proyecto):
     python scripts/registrar_telegram.py
