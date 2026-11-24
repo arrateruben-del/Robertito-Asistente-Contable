@@ -69,12 +69,10 @@ def send_document(chat_id: int, filename: str, content: bytes | str,
 # --- Configuración del bot (webhook, menú, comandos) ---
 
 def set_webhook(url: str, secret_token: str) -> dict:
-    return _call(
-        "setWebhook",
-        url=url,
-        secret_token=secret_token,
-        allowed_updates=["message", "callback_query"],
-        drop_pending_updates=True,
+    """Impedir que el backend sustituya el webhook de n8n."""
+    raise RuntimeError(
+        "El webhook de @Elrobertbot lo administra el Telegram Trigger de n8n; "
+        "no se puede registrar desde este backend."
     )
 
 
