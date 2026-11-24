@@ -44,7 +44,7 @@ WEBAPP_URL: str = os.environ.get("WEBAPP_URL", "")
 WEBHOOK_SECRET_PATH: str = os.environ.get("WEBHOOK_SECRET_PATH", "hook")
 WEBHOOK_SECRET_TOKEN: str = os.environ.get("WEBHOOK_SECRET_TOKEN", "")
 
-# Allowlist opcional de chat IDs. Vacío => se permite a todos (no bloquear por defecto).
+# Lista de chat IDs autorizados. Vacía => acceso denegado a todos (fail closed).
 _raw_allow = os.environ.get("ALLOWED_CHAT_IDS", "").strip()
 ALLOWED_CHAT_IDS: set[int] = set()
 if _raw_allow:
@@ -69,10 +69,8 @@ CUIT_AGENTE_RETENCION: str = os.environ.get("CUIT_AGENTE_RETENCION", "2000000000
 
 
 def acceso_permitido(chat_id: int) -> bool:
-    """True si el chat está habilitado. Si la allowlist está vacía, permite a todos."""
-    if not ALLOWED_CHAT_IDS:
-        return True
-    return chat_id in ALLOWED_CHAT_IDS
+    """True solo si el chat figura explícitamente en la lista de IDs autorizados."""
+    return bool(ALLOWED_CHAT_IDS) and chat_id in ALLOWED_CHAT_IDS
 
 
 # =========================================================================
