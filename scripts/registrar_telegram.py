@@ -19,15 +19,14 @@ def main() -> None:
     if not config.BOT_TOKEN:
         raise SystemExit("Falta BOT_TOKEN en el .env. Corré scripts/poblar_env.py primero.")
 
-    # 1) Webhook
-    r = tg.set_webhook(config.WEBHOOK_URL, config.WEBHOOK_SECRET_TOKEN)
-    print("setWebhook ok:", r.get("ok"), "-", r.get("description"))
+    # El webhook de Telegram pertenece exclusivamente al Telegram Trigger de n8n.
+    # No llamar setWebhook desde este backend: reemplazaría el endpoint activo de n8n.
 
-    # 2) Botón de menú (Mini App)
+    # 1) Botón de menú (Mini App)
     r = tg.set_chat_menu_button(config.WEBAPP_URL, text="Abrir Robertito")
     print("setChatMenuButton ok:", r.get("ok"), "-", r.get("description"))
 
-    # 3) Comandos
+    # 2) Comandos
     comandos = [
         {"command": "start", "description": "Iniciar / ver el menú de Robertito"},
         {"command": "ayuda", "description": "Ver las opciones disponibles"},
@@ -36,7 +35,7 @@ def main() -> None:
     r = tg.set_my_commands(comandos)
     print("setMyCommands ok:", r.get("ok"), "-", r.get("description"))
 
-    # 4) Estado del webhook (sin exponer el token)
+    # 3) Verificar el estado del webhook (solo lectura; sin exponer el token)
     info = tg.get_webhook_info().get("result", {})
     url = info.get("url", "")
     # Ofuscar el secret_path en la URL mostrada.
