@@ -137,8 +137,12 @@
             return;
           }
           const url = `https://t.me/${botUsername}?start=${encodeURIComponent(choice)}`;
-          if (tg?.openTelegramLink) tg.openTelegramLink(url);
-          else window.location.assign(url);
+          if (tg?.openTelegramLink) {
+            tg.openTelegramLink(url);
+            window.setTimeout(() => tg.close(), 150);
+          } else {
+            window.location.assign(url);
+          }
         });
       });
     })();
