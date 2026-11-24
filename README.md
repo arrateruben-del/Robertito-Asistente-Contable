@@ -29,7 +29,7 @@ Todo el texto de cara al usuario está en **español rioplatense**.
 ```
 Robertito-Asistente-Contable/
 ├── bot/                     # Backend del bot
-│   ├── app.py               # Servidor FastAPI (webhook + Mini App + /health)
+│   ├── app.py               # Servidor FastAPI (Mini App + /health; webhook legado)
 │   ├── config.py            # Config + ESCALA DE RETENCIÓN (parametrizable)
 │   ├── retencion.py         # Cálculo de retención de Ganancias (RG 830)
 │   ├── sicore.py            # Generador del archivo de importación SICORE (ancho fijo)
@@ -40,7 +40,7 @@ Robertito-Asistente-Contable/
 │   └── index.html           # Mini App (diseño oficial — NO rediseñar)
 ├── scripts/
 │   ├── poblar_env.py        # Genera .env con el token (sin imprimirlo)
-│   └── registrar_telegram.py# setWebhook + setChatMenuButton + setMyCommands
+│   └── registrar_telegram.py# setChatMenuButton + setMyCommands (no registra webhook)
 ├── deploy/
 │   ├── robertito-bot.service      # Unit systemd
 │   └── robertito-bot-ruben.conf   # Vhost nginx
@@ -50,9 +50,7 @@ Robertito-Asistente-Contable/
 └── .gitignore
 ```
 
-**Framework:** FastAPI + Uvicorn en **modo webhook** (no polling), más `httpx`
-para llamar a la Bot API. Elegido por ser simple de mantener e integrarse
-directamente con nginx, y poder servir la Mini App estática desde el mismo proceso.
+**Framework:** FastAPI + Uvicorn sirve la Mini App estática y `/health`. El webhook de Telegram se administra desde el Telegram Trigger de n8n; el endpoint FastAPI queda legado y no debe recibir el tráfico del bot.
 
 **Flujo:** Telegram → Telegram Trigger de n8n → workflows de procesamiento. FastAPI queda para servir la Mini App y el healthcheck; no debe registrar el webhook del bot.
 
@@ -62,7 +60,7 @@ directamente con nginx, y poder servir la Mini App estática desde el mismo proc
 
 | Método | Ruta                      | Descripción                                   |
 |--------|---------------------------|-----------------------------------------------|
-| POST   | `/webhook/<secret_path>`  | Recibe updates de Telegram (valida secret token) |
+| POST   | `/webhook/<secret_path>`  | Endpoint legado; no recibe actualizaciones del bot en producción |
 | GET    | `/app` y `/`              | Sirve la Mini App (`webapp/index.html`)       |
 | GET    | `/health`                 | Healthcheck (`ok`)                            |
 
