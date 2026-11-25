@@ -121,6 +121,15 @@
       const tg = window.Telegram?.WebApp;
       const botUsername = 'Elrobertbot';
       const notice = document.getElementById('notice');
+      const params = new URLSearchParams(window.location.search);
+      const topicIds = {
+        clientes: String(params.get('clientes') || '').trim(),
+        estudio: String(params.get('estudio') || '').trim(),
+      };
+      const showNotice = message => {
+        notice.textContent = message;
+        notice.classList.add('show');
+      };
       tg?.ready();
       tg?.expand();
       try {
@@ -131,12 +140,14 @@
       document.querySelectorAll('[data-action]').forEach(button => {
         button.addEventListener('click', () => {
           const choice = button.dataset.action;
-          if (!botUsername || botUsername === 'BOT_USERNAME') {
-            notice.textContent = 'Falta vincular el usuario del bot para continuar.';
-            notice.classList.add('show');
+          const topicId = topicIds[choice];
+          if (!/^\\d+$/.test(topicId)) {
+            const label = choice === 'clientes' ? 'Clientes' : 'Estudio';
+            const command = choice === 'clientes' ? '/start clientes' : '/start estudio';
+            showNotice(`Todavía no está registrado el tema de ${label}. Abrilo en Telegram y escribí ${command} una vez; después volvé a abrir este menú.`);
             return;
           }
-          const url = `https://t.me/${botUsername}?start=${encodeURIComponent(choice)}`;
+          const url = `https://t.me/${botUsername}/${encodeURIComponent(topicId)}`;
           if (tg?.openTelegramLink) {
             tg.openTelegramLink(url);
             window.setTimeout(() => tg.close(), 150);
